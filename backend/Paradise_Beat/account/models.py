@@ -170,8 +170,6 @@ class UserFollower(models.Model):
             self.follower_user.remove(user)
             self.qountity -= 1
             self.save()
-    
-
 
 
 class UserFollowing(models.Model):

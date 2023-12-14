@@ -37,7 +37,8 @@ INSTALLED_APPS = [
 
 
     # Custome apps
-    "account",
+    "account.apps.AccountConfig",
+    "beats.apps.BeatsConfig",
 ]
 
 MIDDLEWARE = [
