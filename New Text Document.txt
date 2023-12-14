@@ -1,0 +1,1 @@
+https://blog.documatic.com/build-a-blog-api-with-jwt-authentication-using-django-rest-framework/

@@ -14,26 +14,14 @@ class OfficialManager(Manager):
     
 class UserManager(BaseUserManager):
     # Method to create user with provided credentials
-    def create_user(self , username, email , phone, password = None): 
-        # Validate username
-        if not username or len(username) <= 0 :
-            raise ValueError("Users must have a valid username")
-        # Validate phone number
-        if not phone or len(phone) <= 0 :
-            raise ValueError('Phone number is required ')
-        # Validate email
-        if not email or len(email) <= 0 :  
-            raise ValueError("Email field is required !") 
-        # Validate password
-        if not password or len(password) < 8 :
-            raise ValueError("Password should be at least 8 characters long ")
-        
-        # Create user
-        email = email.lower() 
+    def create_user(self, username, email , phone, type, slug, password=None): 
+        email = email.lower()
         user = self.model( 
             username = username,
             email = email,
-            phone = phone
+            phone = phone,
+            type = type,
+            slug = slug
         ) 
         user.set_password(password) 
         user.save(using = self._db) 

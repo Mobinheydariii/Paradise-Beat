@@ -1,46 +1,31 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from . import models
+from .models import(
+    User,
+    UserProfile,
+    Otp
+)
 
+class UserLoginSerializer(serializers.Serializer):
+    """
+    Serializer class to authenticate users with email and password.
+    """
 
+    phone = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
-class LoginSerializer(serializers.Serializer):
-    phone = serializers.CharField(required=True)
-    password = serializers.CharField(required=True)
-
-
-
-class SimpleUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = models.SimpleUser
+        model = User
         fields = "__all__"
 
 
-class SimpleUserProfileSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = models.SimpleUserProfile
+        model = UserProfile
         fields = "__all__"
-
-
-class SimpleUserRegisterSerializer(serializers.ModelSerializer):
-
-    phone = serializers.CharField(write_only=True, required=True)
-
-    email = serializers.EmailField(write_only=True, required=True)
-
-    username = serializers.CharField(write_only=True, required=True)
-
-    password = serializers.CharField(write_only=True, required=True,
-                                        validators=[validate_password])
-    
-    password2 = serializers.CharField(write_only=True, required=True)
-
-
-    class Meta:
-        model = models.SimpleUser
-        fields = ('phone', 'email', 'username', 'password', 'password2')
 
 
 class OtpSerializer(serializers.ModelSerializer):
@@ -63,9 +48,15 @@ class OtpSerializer(serializers.ModelSerializer):
     code = serializers.CharField(write_only=True, required=True)
 
     class Meta:
-        model = models.Otp
+        model = Otp
         fields = ('phone', 'email', 'username', 'password', 'password2', 'type', 'token', 'code')
 
 
 class OtpCodeSerializer(serializers.Serializer):
     code = serializers.CharField(write_only=True, required=True)
+
+
+class UserChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True)
+    confirm_new_password = serializers.CharField(write_only=True, required=True)
