@@ -3,14 +3,9 @@ from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from rest_framework.views import APIView, Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
-from .serializers import(
-    OtpSerializer,
-    UserLoginSerializer,
-    OtpCodeSerializer,
-    UserProfileSerializer,
-    UserChangePasswordSerializer,
-)
+from . import serializers
 from random import randint
 from .models import(
     User,
@@ -20,6 +15,8 @@ from .models import(
 
 
 
+class TokenObtainView(TokenObtainPairView):
+    serializer_class = serializers.TokenObtainSerializer
 
 
 class UserLogin(APIView):
@@ -27,7 +24,7 @@ class UserLogin(APIView):
         if request.user.is_authenticated == True:
            return Response("You are already logged in", status=status.HTTP_400_BAD_REQUEST)
         else:
-            serializer = UserLoginSerializer(data=request.data)
+            serializer = serializers.UserLoginSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
                 user = authenticate(username=serializer.validated_data['phone'], password=serializer.validated_data['password'])
                 if user is not None:
@@ -58,7 +55,7 @@ class UserRegisterView(APIView):
         if request.user.is_authenticated == True:
             return Response({"detail": "You are authenticated"}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            serializer = OtpSerializer(data=request.data, partial=True)
+            serializer = serializers.OtpSerializer(data=request.data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 password = serializer.validated_data['password']
                 password2 = serializer.validated_data['password2']
@@ -90,10 +87,12 @@ class UserCheckOtp(APIView):
         else:
             otp = get_object_or_404(Otp, token=token)
             if otp:
-                serializer = OtpCodeSerializer(data=request.data)
+                serializer = serializers.OtpCodeSerializer(data=request.data)
                 if serializer.is_valid(raise_exception=True):
                     code = serializer.validated_data['code']
                     if otp.code == code:
+                        otp.is_used = True
+                        otp.save()
                         user = User.objects.create_user(
                             phone = otp.phone,
                             email = otp.email,
@@ -103,8 +102,6 @@ class UserCheckOtp(APIView):
                             slug = token
                         )
                         user.save()
-                        profile = UserProfile.objects.create(user=user)
-                        profile.save()
                         authenticate(user)
                         token = RefreshToken.for_user(user)
                         return Response({"refresh": str(token), "access": str(token.access_token)}, status=status.HTTP_200_OK)
@@ -119,7 +116,7 @@ class UserProfileView(APIView):
     def get(self, request, username, slug):
         user = get_object_or_404(User, username=username, slug=slug)
         profile = UserProfile.objects.get(user=user)
-        serializer = UserProfileSerializer(instance=profile)
+        serializer = serializers.UserProfileSerializer(instance=profile)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
@@ -138,7 +135,7 @@ class UserChangePasswordView(APIView):
     def post(self, request):
         if request.user.is_authenticated == True:
             user = request.user
-            serializer = UserChangePasswordSerializer(data=request.data)
+            serializer = serializers.UserChangePasswordSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
                 oldpassword = serializer.validated_data['oldpassword']
                 newpassword = serializer.validated_data['newpassword']

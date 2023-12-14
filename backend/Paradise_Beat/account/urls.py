@@ -14,6 +14,7 @@ urlpatterns = [
     path('user/delete-account/', views.UserDeleteAccount.as_view(), name="user_delete_account"),
 
     # Token 
+    path('token/', views.TokenObtainView.as_view(), name='token_obtain'),
     path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
 
     # Profile, Panel, user managments

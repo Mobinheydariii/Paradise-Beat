@@ -135,7 +135,7 @@ class UserSocialMedia(models.Model):
     
 
     def __str__(self):
-        return self.instagram
+        return self.user.username
 
 
 class UserFollower(models.Model):
@@ -148,6 +148,30 @@ class UserFollower(models.Model):
 
     qountity = models.IntegerField(default=0)
 
+    
+    class Meta:
+        verbose_name = "فالور"
+        verbose_name_plural = "فالور ها"
+
+    
+    def __str__(self):
+        return f'{self.user.username}-{self.qountity}'
+    
+
+    def add_follower(self, user):
+        if user not in self.follower_user.all():
+            self.follower_user.add(user)
+            self.qountity += 1
+            self.save()
+
+
+    def remove_follower(self, user):
+        if user in self.follower_user.all():
+            self.follower_user.remove(user)
+            self.qountity -= 1
+            self.save()
+    
+
 
 
 class UserFollowing(models.Model):
@@ -159,6 +183,29 @@ class UserFollowing(models.Model):
                                              related_name='following_user', blank=True)
 
     qountity = models.IntegerField(default=0)
+
+    
+    class Meta:
+        verbose_name = "دنبال کننده"
+        verbose_name_plural = "دنبال کنندگان"
+    
+
+    def __str__(self):
+        return f'{self.user.username}-{self.qountity}'
+    
+    
+    def add_following(self, user):
+        if user not in self.following_user.all():
+            self.following_user.add(user)
+            self.qountity += 1
+            self.save()
+
+
+    def remove_following(self, user):
+        if user in self.following_user.all():
+            self.following_user.remove(user)
+            self.qountity -= 1
+            self.save()
 
 
 class Otp(models.Model):

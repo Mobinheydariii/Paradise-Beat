@@ -1,15 +1,29 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import(
     User,
     UserProfile,
     Otp
 )
 
+
+
+class TokenObtainSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        
+        # These are claims, you can add custom claims
+        token['phone'] = user.phone
+        token['username'] = user.username
+        token['email'] = user.email
+        token['slug'] = user.slug
+
+        return token
+    
+
 class UserLoginSerializer(serializers.Serializer):
-    """
-    Serializer class to authenticate users with email and password.
-    """
 
     phone = serializers.CharField()
     password = serializers.CharField(write_only=True)
