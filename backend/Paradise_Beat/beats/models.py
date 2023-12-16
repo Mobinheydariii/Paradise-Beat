@@ -45,73 +45,84 @@ class Tag(models.Model):
 
 class Beat(models.Model):
 
-    class Status(models.TextChoices):
+    class Publish(models.TextChoices):
         DRAFT = 'DF', 'Draft'
+        PUBLISHED = 'PU', 'Published'
+
+
+    class Status(models.TextChoices):
         ACCEPTED = 'َAC', 'Accepted'
         REJECTED = 'RJ', 'Rejected'
+        CHECKIND = 'CH', 'Checking'
+    
 
-    # Category for this Bit
+    # Category for this Beat
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="دسته بندی")
 
-    # Tags for this Bit
+    # Tags for this Beat
     tags = models.ManyToManyField(Tag, verbose_name="برچسب ها", blank=True)
 
     # Producer or the musician 
     producer = models.ForeignKey(User,
                                  on_delete=models.CASCADE,
-                                 related_name="bit_producer", verbose_name="پرودوسر")
+                                 related_name="producer", verbose_name="پرودوسر")
     
-    # Represents the title of the Bit
+    # Represents the title of the Beat
     title = models.CharField(max_length=200, verbose_name="تایتل بیت", unique=True)
 
-    # Represents the URL slug for the Bit
+    # Represents the URL slug for the Beat
     slug = models.SlugField(max_length=200, verbose_name="اسلاگ(url)", unique=True)
 
-    # Represents the beats per minute (BPM) of the Bit
+    # Represents the beats per minute (BPM) of the Beat
     bpm = models.BigIntegerField()
 
-    # Represents the musical keys of the Bit
+    # Represents the musical keys of the Beat
     keys = models.CharField(max_length=20)
 
-    # Represents the publish date of the Bit
-    publish = models.DateField(verbose_name="زمان انتشار", blank=True, null=True)
+    # Represents the image of the Beat
+    image = models.ImageField(verbose_name="تصویر بیت", upload_to="Beats/images/image/")
 
-    # Represents the created date of the Bit
-    created = models.DateTimeField(auto_now_add=True)
+    # Represents the free mp3 file of the Beat
+    mp3_free = models.FileField(verbose_name="mp3 رایگان", upload_to='Beats/files/mp3/free/')
 
-    # Represents the updated date of the Bit
-    updated = models.DateTimeField(auto_now=True)
+    # Represents the premium mp3 file of the Beat
+    mp3_no_tag_in = models.FileField(verbose_name="pm3 پولی", upload_to='Beats/files/mp3/no_tag/')
 
-    # Represents the image of the Bit
-    image = models.ImageField(verbose_name="تصویر بیت", upload_to="bits/images/image/")
+    # Represents the wav file of the Beat
+    wav = models.FileField(verbose_name="فایل wav", upload_to='Beats/files/wav/')
 
-    # Represents the free mp3 file of the Bit
-    mp3_free = models.FileField(verbose_name="mp3 رایگان", upload_to='bits/files/mp3/free/')
+    # Represents the published_status of the Beat
+    published_status = models.CharField(max_length=2, choices=Publish.choices, default=Publish.DRAFT)
+    # Represents the status of the Beat
+    status = models.CharField(max_length=3, choices=Status.choices, default=Status.CHECKIND)
 
-    # Represents the premium mp3 file of the Bit
-    mp3_no_tag_in = models.FileField(verbose_name="pm3 پولی", upload_to='bits/files/mp3/no_tag/')
-
-    # Represents the wav file of the Bit
-    wav = models.FileField(verbose_name="فایل wav", upload_to='bits/files/wav/')
-
-    # Represents the status of the Bit
-    status = models.CharField(max_length=3, choices=Status.choices, default=Status.DRAFT)
-
-    # Represents the total plays of the Bit
+    # Represents the total plays of the Beat
     plays = models.IntegerField(verbose_name="تعداد پلی", default=0)
 
-    # Represents the total likes of the Bit
+    # Represents the total likes of the Beat
     likes = models.IntegerField(verbose_name="تعداد لایک", default=0)
 
-    # Represents the total dislikes of the Bit
+    # Represents the total dislikes of the Beat
     dislikes = models.IntegerField(verbose_name="تعداد dislike ها", default=0)
 
-    # Represents the total comments of the Bit
+    # Represents the total comments of the Beat
     comments = models.IntegerField(verbose_name="تعداد کامنت ها", default=0)
 
-    # Managers for the Bit model
+    # Represents the publish date of the Beat
+    publish = models.DateField(verbose_name="زمان انتشار", blank=True, null=True)
+
+    # Represents the created date of the Beat
+    created = models.DateTimeField(auto_now_add=True)
+
+    # Represents the updated date of the Beat
+    updated = models.DateTimeField(auto_now=True)
+
+    # Managers for the Beat model
     objects = models.Manager()
     accepted = managers.AcceptedManager()
+    rejected = managers.RejectedManager()
+    checking = managers.CheckingManager()
+    published = managers.PublishManager()
     drafts = managers.DraftManager()
 
     class Meta:
@@ -124,9 +135,10 @@ class Beat(models.Model):
 
 
 class Comment(models.Model):
+    
     beat = models.ForeignKey(Beat, 
                             on_delete=models.CASCADE,
-                            related_name="bit_comments", verbose_name="کامنت های بیت")
+                            related_name="Beat_comments", verbose_name="کامنت های بیت")
     
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE, 
