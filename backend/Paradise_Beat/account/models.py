@@ -9,11 +9,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Types(models.TextChoices):
 
-        SIMPLE_USER = "SIM", "Simple_user" 
-        SINGER = "SIN", "Singer" 
-        PRODUCER = "PRD", "Producer" 
-        MUSICIAN = "MUC", "Musician" 
-        SUPORTER = "SPO", "Supporter"
+        SIMPLE_USER = "SIM", "Simple_user"
+        SINGER = "SIN", "Singer"
+        PRODUCER = "PRD", "Producer"
+        MUSICIAN = "MUC", "Musician"
 
     
     class UserStatus(models.TextChoices):
