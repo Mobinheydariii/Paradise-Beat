@@ -93,6 +93,7 @@ class Beat(models.Model):
 
     # Represents the published_status of the Beat
     published_status = models.CharField(max_length=2, choices=Publish.choices, default=Publish.DRAFT)
+
     # Represents the status of the Beat
     status = models.CharField(max_length=3, choices=Status.choices, default=Status.CHECKIND)
 
@@ -132,6 +133,45 @@ class Beat(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+class PermiumBeatLicence(models.Model):
+    class PermiumLicenceStatus(models.TextChoices):
+        ACTIVE = 'AC', 'Active'
+        EXPIRED = 'EX', 'Expired'
+    
+
+    beat = models.ForeignKey(Beat, 
+                             on_delete=models.CASCADE, 
+                             verbose_name="بیت", related_name="beat_permium_lisence")
+    
+    price = models.BigIntegerField(verbose_name="قیمت")
+
+    status = models.CharField(
+        max_length=2,
+        choices = PermiumLicenceStatus.choices,
+        default = PermiumLicenceStatus.ACTIVE
+    )
+
+
+class BasicBeatLicence(models.Model):
+    class BasicLicenceStatus(models.TextChoices):
+        ACTIVE = 'AC', 'Active'
+        EXPIRED = 'EX', 'Expired'
+    
+
+    beat = models.ForeignKey(Beat, 
+                             on_delete=models.CASCADE, 
+                             verbose_name="بیت", related_name="beat_basic_lisence")
+    
+    price = models.BigIntegerField(verbose_name="قیمت")
+
+    status = models.CharField(
+        max_length=2,
+        choices = BasicLicenceStatus.choices,
+        default = BasicLicenceStatus.ACTIVE
+    )
 
 
 class Comment(models.Model):

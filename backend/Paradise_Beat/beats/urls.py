@@ -31,9 +31,11 @@ urlpatterns = [
 
 
     # Beats list for panel
-    path('beats/accepted/', views.AcceptedBeats.as_view(), name="accepted_beats"),
-    path('beats/rejected/', views.RejectedBeats.as_view(), name="rejected_beats"),
-    path('beats/checking/', views.CheckingBeats.as_view(), name="checking_beats"),
-    path('beats/published/', views.PublishedBeats.as_view(), name="published_beats"),
-    path('beats/draft/', views.DraftBeats.as_view(), name="draft_beats"),
+    path('accepted/beats/', views.AcceptedBeats.as_view(), name="accepted_beats"),
+    path('rejected/beats/', views.RejectedBeats.as_view(), name="rejected_beats"),
+    path('checking/beats/', views.CheckingBeats.as_view(), name="checking_beats"),
+    path('published/beats/', views.PublishedBeats.as_view(), name="published_beats"),
+    path('draft/beats/', views.DraftBeats.as_view(), name="draft_beats"),
+
+    # Create or update Beat Views
 ]
