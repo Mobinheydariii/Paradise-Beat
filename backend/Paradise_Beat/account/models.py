@@ -12,7 +12,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         SIMPLE_USER = "SIM", "Simple_user"
         SINGER = "SIN", "Singer"
         PRODUCER = "PRD", "Producer"
-        MUSICIAN = "MUC", "Musician"
 
     
     class UserStatus(models.TextChoices):
