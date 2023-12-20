@@ -11,8 +11,6 @@ class BeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Beat
         fields = "__all__"
-        
-        
 
 class CategorySerializer(serializers.ModelSerializer):
 
