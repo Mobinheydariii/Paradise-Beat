@@ -18,7 +18,7 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ["is_admin"]
     fieldsets = [
         ("اطلاعات شخصی", {"fields": ["phone"]}),
-        ("طلاعات کاربر", {"fields": ["username", "email", "type", "joined"]}),
+        ("طلاعات کاربر", {"fields": ["username", "email", "type"]}),
         ("مجوزهای کاربر", {"fields": ["is_admin", "is_active"]}),
     ]
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin

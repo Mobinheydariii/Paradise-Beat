@@ -6,14 +6,13 @@ from .models import(
     Tag,
 )
 
-
-
-
 class BeatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Beat
         fields = "__all__"
+        
+        
 
 class CategorySerializer(serializers.ModelSerializer):
 
@@ -29,10 +28,9 @@ class TagSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class Commntserializer(serializers.ModelSerializer):
+class CommntSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
         fields = "__all__"
-
 

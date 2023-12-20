@@ -53,7 +53,7 @@ class Beat(models.Model):
     class Status(models.TextChoices):
         ACCEPTED = 'َAC', 'Accepted'
         REJECTED = 'RJ', 'Rejected'
-        CHECKIND = 'CH', 'Checking'
+        CHECKING = 'CH', 'Checking'
     
 
     # Category for this Beat
@@ -95,7 +95,7 @@ class Beat(models.Model):
     published_status = models.CharField(max_length=2, choices=Publish.choices, default=Publish.DRAFT)
 
     # Represents the status of the Beat
-    status = models.CharField(max_length=3, choices=Status.choices, default=Status.CHECKIND)
+    status = models.CharField(max_length=3, choices=Status.choices, default=Status.CHECKING)
 
     # Represents the total plays of the Beat
     plays = models.IntegerField(verbose_name="تعداد پلی", default=0)

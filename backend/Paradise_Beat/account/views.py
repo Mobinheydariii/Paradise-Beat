@@ -75,7 +75,6 @@ class UserRegisterView(APIView):
                     return Response({"otp created":[{'code':code, 'token':token}]}, status=status.HTTP_201_CREATED)
                 else:
                     return Response("password is invalid", status=status.HTTP_403_FORBIDDEN)
-                
             else:
                 return Response({"errores" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -152,4 +151,4 @@ class UserChangePasswordView(APIView):
             else:
                 return Response({'errors':serializer.errors}, status=status.HTTP_403_FORBIDDEN)
         else:
-            return Response('you are not authenticated', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('you are not authenticated', status=status.HTTP_401_UNAUTHORIZED) 
