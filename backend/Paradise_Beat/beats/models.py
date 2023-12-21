@@ -45,10 +45,10 @@ class Tag(models.Model):
 
 class Beat(models.Model):
 
-    class Publish(models.TextChoices):
+    class MainStatus(models.TextChoices):
         DRAFT = 'DF', 'Draft'
-        PUBLISHED = 'PU', 'Published'
-
+        PUBLIC = 'PU', 'Public'
+        PRIVATE = 'PR', 'Private'
 
     class Status(models.TextChoices):
         ACCEPTED = 'َAC', 'Accepted'
@@ -74,28 +74,36 @@ class Beat(models.Model):
     slug = models.SlugField(max_length=200, verbose_name="اسلاگ(url)", unique=True)
 
     # Represents the beats per minute (BPM) of the Beat
-    bpm = models.BigIntegerField()
+    bpm = models.BigIntegerField(blank=True, null=True)
 
     # Represents the musical keys of the Beat
-    keys = models.CharField(max_length=20)
+    keys = models.CharField(max_length=20, blank=True, null=True)
 
     # Represents the image of the Beat
-    image = models.ImageField(verbose_name="تصویر بیت", upload_to="Beats/images/image/")
+    image = models.ImageField(verbose_name="تصویر بیت", upload_to="Beats/images/image/", blank=True, null=True)
 
     # Represents the free mp3 file of the Beat
-    mp3_free = models.FileField(verbose_name="mp3 رایگان", upload_to='Beats/files/mp3/free/')
+    mp3_free = models.FileField(verbose_name="mp3 رایگان", upload_to='Beats/files/mp3/free/', blank=True, null=True)
 
     # Represents the premium mp3 file of the Beat
-    mp3_no_tag_in = models.FileField(verbose_name="pm3 پولی", upload_to='Beats/files/mp3/no_tag/')
+    mp3_no_tag_in = models.FileField(verbose_name="pm3 پولی", upload_to='Beats/files/mp3/no_tag/', blank=True, null=True)
 
     # Represents the wav file of the Beat
-    wav = models.FileField(verbose_name="فایل wav", upload_to='Beats/files/wav/')
+    wav = models.FileField(verbose_name="فایل wav", upload_to='Beats/files/wav/', blank=True, null=True)
 
     # Represents the published_status of the Beat
-    published_status = models.CharField(max_length=2, choices=Publish.choices, default=Publish.DRAFT)
+    main_status = models.CharField(
+        max_length=2,
+        choices=MainStatus.choices,
+        default=MainStatus.DRAFT
+    )
 
     # Represents the status of the Beat
-    status = models.CharField(max_length=3, choices=Status.choices, default=Status.CHECKING)
+    status = models.CharField(
+        max_length=3, 
+        choices=Status.choices, 
+        default=Status.CHECKING
+    )
 
     # Represents the total plays of the Beat
     plays = models.IntegerField(verbose_name="تعداد پلی", default=0)

@@ -1,7 +1,7 @@
 from rest_framework.views import APIView, Response
 from rest_framework.viewsets import ViewSet
 from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
+from django.utils.crypto import get_random_string
 from django.shortcuts import get_object_or_404
 from .models import(
     Category, 
@@ -34,5 +34,57 @@ class BeatViewSet(ViewSet, BeatPagination):
         queryset = get_object_or_404(Beat,slug=slug, pk=pk)
         serializer = serializers.BeatDetailSerializer(instance=queryset)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def create(self, request):
+        if request.user.is_authenticated == True:
+            user = request.user
+            if user.type == 'PRD' or 'MUC':
+                serializer = serializers.BeatSerializer(data=request.data, partial=True)
+                if serializer.is_valid(raise_exception=True):
+                    slug = get_random_string(50)
+                    beat = Beat.drafts.create(
+                        producer = user,
+                        title = serializer.validated_data['title'],
+                        slug = str(slug),
+                        main_status = "DF",
+                        status = "CH"
+                    )
+                    beat.save()
+                    return Response({"Response":"Created."}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"error":"invalid user type."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error":"Unauthorized user."},status=status.HTTP_401_UNAUTHORIZED)
+
+
+    def update(self, request, slug, pk):
+        queryset = get_object_or_404(Beat, slug=slug, pk=pk)
+        if request.user.is_authenticated == True:
+            if request.user == queryset.producer:
+                serializer = serializers.BeatSerializer(queryset, data=request.data, partial=True)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+                    return Response(serializer.data)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"error":"you are not the main producer."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error":"you are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+    
+
+    def delete(self, request, slug, pk):
+        queryset = get_object_or_404(Beat, slug=slug, pk=pk)
+        if request.user.is_authenticated == True:
+            if request.user == queryset.producer:
+                queryset.delete()
+                return Response({"Response":"Deleted."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error":"you are not the main producer."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error":"you are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
             

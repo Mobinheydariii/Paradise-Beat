@@ -17,9 +17,9 @@ class CheckingManager(Manager):
 
 class DraftManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status=models.Beat.Publish.DRAFT)
+        return super().get_queryset().filter(status=models.Beat.MainStatus.DRAFT)
     
 class PublishManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status=models.Beat.Publish.PUBLISHED)
+        return super().get_queryset().filter(status=models.Beat.MainStatus.PUBLISHED)
 
