@@ -15,26 +15,13 @@ class UserAdmin(BaseUserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = ["username", "type", "phone", "email", "is_admin"]
-    list_filter = ["is_admin"]
+    list_filter = ["is_admin", "type"]
     fieldsets = [
-        ("اطلاعات شخصی", {"fields": ["phone"]}),
-        ("طلاعات کاربر", {"fields": ["username", "email", "type"]}),
-        ("مجوزهای کاربر", {"fields": ["is_admin", "is_active"]}),
-    ]
-    # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-    # overrides get_fieldsets to use this attribute when creating a user.
-    add_fieldsets = [
-        (
-            None,
-            {
-                "classes": ["wide"],
-                "fields": ["email", "password1", "password2"],
-            },
-        ),
+        ("طلاعات کاربر", {"fields": ["username", "phone", "email", "type"]}),
+        ("دسترسی های کاربر", {"fields": ["is_admin", "is_active"]})
     ]
     search_fields = ["username", "phone", "email", "type"]
     ordering = ["type", "joined"]
-    filter_horizontal = []
 
 # Now register the new UserAdmin...
 admin.site.register(models.User, UserAdmin)
@@ -45,4 +32,12 @@ admin.site.unregister(Group)
 
 admin.site.register(models.UserFollower)
 admin.site.register(models.UserFollowing)
-admin.site.register(models.UserProfile)
+
+@admin.register(models.UserProfile)
+class AdminUserProfile(admin.ModelAdmin):
+    list_display = ["user", "full_name", "bio"]
+    ordering = ["user"]
+    search_fields = ["user", "full_name"]
+
+
+admin.site.register(models.UserSocialMedia)

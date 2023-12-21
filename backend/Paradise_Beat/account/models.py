@@ -108,8 +108,8 @@ class UserProfile(models.Model):
 
 
     class Meta:
-        verbose_name = "پروفایل کاربر ساده"
-        verbose_name_plural = "پروفایل کاربران ساده" 
+        verbose_name = "پروفایل کاربر"
+        verbose_name_plural = "پروفایل کاربران" 
 
 
 class UserSocialMedia(models.Model):
@@ -135,6 +135,12 @@ class UserSocialMedia(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+    class Meta:
+        verbose_name = "آدرس های فضای مجازی کاربر"
+        verbose_name_plural = "آدرس های فضای مجازی کاربران"
+
 
 
 class UserFollower(models.Model):

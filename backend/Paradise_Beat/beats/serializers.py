@@ -27,7 +27,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CommntSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
