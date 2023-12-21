@@ -23,3 +23,6 @@ class PublishManager(Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status=models.Beat.MainStatus.PUBLISHED)
 
+class PrivateManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=models.Beat.MainStatus.PRIVATE)

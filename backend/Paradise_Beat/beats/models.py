@@ -133,6 +133,7 @@ class Beat(models.Model):
     checking = managers.CheckingManager()
     published = managers.PublishManager()
     drafts = managers.DraftManager()
+    private = managers.PrivateManager()
 
     class Meta:
         verbose_name = "بیت"

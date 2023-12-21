@@ -16,13 +16,23 @@ urlpatterns = [
 
 
     # Simular and ...
-    path('simular/beat/<int:pk>/', views.SimularBeatView.as_view(), name='simular_beats'),
-    path('related/producer/beat/<int:pk>/', views.ProducerRelatedBeatView.as_view(), name="related_producer_beats"),
+    path('simular-beat/<int:pk>/', views.SimularBeatView.as_view(), name='simular_beats'),
+    path('related-producer-beat/<int:pk>/', views.ProducerRelatedBeatView.as_view(), name="related_producer_beats"),
 
     # Comments urls
-    path('comments/beat/<int:beat_id>/', views.CommentViewSet.as_view({"get":"list"}), name='list_beat_comments'),
-    path('add/comment/<int:beat_id>/', views.CommentViewSet.as_view({"post":"create"}), name="create_comment"),
-    path('update/comment/<int:pk>/', views.CommentViewSet.as_view({"post":"update"}), name="update_comment")
+    path('comments-beat/<int:beat_id>/', views.CommentViewSet.as_view({"get":"list"}), name='list_beat_comments'),
+    path('add-comment/<int:beat_id>/', views.CommentViewSet.as_view({"post":"create"}), name="create_comment"),
+    path('update-comment/<int:pk>/', views.CommentViewSet.as_view({"post":"update"}), name="update_comment"),
+
+    # Private, Draft, Public Beat list
+    path("private-beat-list/", views.PrivateBeatsView.as_view(), name="private_beats"),
+    path("draft-beat-list/", views.DraftBeatsView.as_view(), name="draft_beats"),
+    path("public-beat-list/", views.PublishedBeatsView.as_view(), name="public_beats"),
+
+    # Accepted, Rejected, Checking
+    path("accepted-beat-list/", views.AcceptedBeatsView.as_view(), name="accepted_beats"),
+    path("rejected-beat-list/", views.RejectedBeatsView.as_view(), name="rejected_beats"),
+    path("checking-beat-list/", views.CheckingBeatsView.as_view(), name="Checking_beats")
 ]
 
 router = DefaultRouter()

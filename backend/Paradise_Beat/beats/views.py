@@ -181,11 +181,104 @@ class CommentViewSet(BeatViewSet):
     def update(self, request, pk):
         if request.user.is_authenticated == True:
             queryset = Comment.objects.get(id=pk)
-            serializer = serializers.CommentSerializer(data=request.data, partial=True)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                return Response({"Detail":"Comment updated."}, status=status.HTTP_200_OK)
+            if request.user == queryset.user:
+                serializer = serializers.CommentSerializer(data=request.data, partial=True)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+                    return Response({"Detail":"Comment updated."}, status=status.HTTP_200_OK)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
         else:
-            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)   
+            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+    def delete(self, request, pk):
+        if request.user.is_authenticated == True:
+            queryset = Comment.objects.get(id=pk)
+            if request.user == queryset.user:
+                queryset.delete()
+            else:
+                return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+
+class DraftBeatsView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated == True:
+            user = request.user
+            if user.type == 'PRD' or 'MUC':
+                queryset = Beat.drafts.filter(producer=user).order_by('-created')
+                serializer = serializers.BeatSerializer(queryset, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class PublishedBeatsView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated == True:
+            user = request.user
+            if user.type == 'PRD' or 'MUC':
+                queryset = Beat.published.filter(producer=user).order_by('-created')
+                serializer = serializers.BeatSerializer(queryset, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class PrivateBeatsView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated == True:
+            user = request.user
+            if user.type == 'PRD' or 'MUC':
+                queryset = Beat.private.filter(producer=user).order_by('-created')
+                serializer = serializers.BeatSerializer(queryset, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class AcceptedBeatsView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated == True:
+            user = request.user
+            if user.type == 'PRD' or 'MUC':
+                queryset = Beat.accepted.filter(producer=user).order_by('-created')
+                serializer = serializers.BeatSerializer(queryset, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class RejectedBeatsView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated == True:
+            user = request.user
+            if user.type == 'PRD' or 'MUC':
+                queryset = Beat.rejected.filter(producer=user).order_by('-created')
+                serializer = serializers.BeatSerializer(queryset, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class CheckingBeatsView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated == True:
+            user = request.user
+            if user.type == 'PRD' or 'MUC':
+                queryset = Beat.checking.filter(producer=user).order_by('-created')
+                serializer = serializers.BeatSerializer(queryset, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
