@@ -3,3 +3,4 @@ from . import models
 
 
 admin.site.register(models.Beat)
+admin.site.register(models.Category)

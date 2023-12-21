@@ -3,6 +3,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework import status
 from django.utils.crypto import get_random_string
 from django.shortcuts import get_object_or_404
+from django.db.models.functions import Random
 from .models import(
     Category, 
     Comment,
@@ -10,8 +11,7 @@ from .models import(
     Tag
 )
 from . import serializers
-from.paginations import BeatPagination
-
+from .paginations import BeatPagination
 
 
 class BeatViewSet(ViewSet, BeatPagination):
@@ -25,6 +25,9 @@ class BeatViewSet(ViewSet, BeatPagination):
             queryset = queryset.filter(category=category)
         if status is not None:
             queryset = queryset.filter(status=status)
+        
+        # Add the random function to the queryset
+        queryset = queryset.annotate(random=Random()).order_by('random')
         result = self.paginate_queryset(queryset, request)
         serializer = serializers.BeatSerializer(result, many=True)
         return self.get_paginated_response(serializer.data)
@@ -87,4 +90,37 @@ class BeatViewSet(ViewSet, BeatPagination):
         else:
             return Response({"error":"you are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
-            
+
+class SimularBeatView(APIView):
+    def get(self, request, pk):
+        beat = get_object_or_404(Beat, pk=pk)
+
+        queryset = Beat.accepted.all()
+
+        # Filter the queryset to get random similar beats
+        random_similar_beats = queryset.filter(category=beat.category)
+
+        # Annotate the queryset with a random ordering
+        random_similar_beats = random_similar_beats.annotate(random=Random()).order_by('random')[:6]
+
+        serializer = serializers.BeatSerializer(random_similar_beats, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class ProducerRelatedBeatView(APIView):
+    def get(self, request, pk):
+        beat = get_object_or_404(Beat, pk=pk)
+        queryset = Beat.accepted.all()
+
+        # Filter the queryset to get random related beats
+        random_related_beats = queryset.filter(
+            producer = beat.producer,
+            category = beat.category,
+            main_status = 'PU'
+        )
+
+        # Annotate the queryset with a related ordering
+        random_related_beats = random_related_beats.annotate(random=Random()).order_by('random')[:6]
+
+        serializer = serializers.BeatSerializer(random_related_beats, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
