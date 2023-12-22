@@ -145,6 +145,7 @@ class Beat(models.Model):
 
 
 
+
 class PermiumBeatLicence(models.Model):
     class PermiumLicenceStatus(models.TextChoices):
         ACTIVE = 'AC', 'Active'
@@ -206,3 +207,27 @@ class Comment(models.Model):
     
     def __str__(self):
         return f'{self.bit.title}---{self.user.user_name}'
+
+
+class BeatLike(models.Model):
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             related_name="user_beat_likes")
+    
+    beat = models.ForeignKey(Beat,
+                             on_delete=models.CASCADE, 
+                             related_name="beat_likes")
+    is_liked = models.BooleanField(default=False)
+
+
+
+class BeatDisLike(models.Model):
+    user = models.OneToOneField(User,
+                                on_delete=models.PROTECT,
+                                related_name='user_beat_dislike')
+    
+    beat = models.ForeignKey(Beat,
+                             on_delete=models.CASCADE, 
+                             related_name="beat_dislike")
+    
+    is_disliked = models.BooleanField(default=False)

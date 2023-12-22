@@ -8,7 +8,9 @@ from .models import(
     Category, 
     Comment,
     Beat,
-    Tag
+    Tag,
+    BeatLike,
+    BeatDisLike
 )
 from . import serializers
 from .paginations import BeatPagination
@@ -282,3 +284,62 @@ class CheckingBeatsView(APIView):
                 return Response({"Detail":"You are not the comment auther."}, status=status.HTTP_403_FORBIDDEN)
         else:
             return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+
+class BeatLikeView(APIView):
+    def post(self, request, pk):
+        if request.user.is_authenticated == True:
+            beat = get_object_or_404(Beat, id=pk)
+            like = BeatLike.objects.create(
+                user = request.user,
+                beat = beat,
+                is_liked = True
+            )
+            beat.likes += 1
+            like.save()
+            beat.save()
+            return Response({"Detail":"Beat liked."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"Detail":"You need to authenticate"}, status=status.HTTP_401_UNAUTHORIZED)
+
+class BeatUnLikeView(APIView):
+    def post(self, request, pk):
+        if request.user.is_authenticated == True:
+            beat = get_object_or_404(Beat, id=pk)
+            like = BeatLike.objects.get(user=request.user, beat=beat)
+            like.is_liked == False
+            beat.likes -= 1
+            like.save()
+            beat.save()
+            return Response({"Detail":"You unlike the beat."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"Detail":"You need to authenticate."})
+
+class BeatDisLikeView(APIView):
+    def post(self, request, pk):
+        if request.user.is_authenticated == True:
+            beat = get_object_or_404(Beat, id=pk)
+            dislike = BeatDisLike.objects.create(
+                user = request.user,
+                beat = beat,
+                is_liked = True
+            )
+            beat.dislikes += 1
+            dislike.save()
+            beat.save()
+            return Response({"Detail":"Beat dis liked."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"Detail":"You need to authenticate"}, status=status.HTTP_401_UNAUTHORIZED)
+
+class BeatUnDisLikeView(APIView):
+    def post(self, request, pk):
+        if request.user.is_authenticated == True:
+            beat = get_object_or_404(Beat, id=pk)
+            dislike = BeatDisLike.objects.get(user=request.user, beat=beat)
+            dislike.is_liked == False
+            beat.dislikes -= 1
+            dislike.save()
+            beat.save()
+            return Response({"Detail":"You un dis liked the beat."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"Detail":"You need to authenticate."})

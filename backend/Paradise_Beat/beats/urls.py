@@ -32,7 +32,14 @@ urlpatterns = [
     # Accepted, Rejected, Checking
     path("accepted-beat-list/", views.AcceptedBeatsView.as_view(), name="accepted_beats"),
     path("rejected-beat-list/", views.RejectedBeatsView.as_view(), name="rejected_beats"),
-    path("checking-beat-list/", views.CheckingBeatsView.as_view(), name="Checking_beats")
+    path("checking-beat-list/", views.CheckingBeatsView.as_view(), name="Checking_beats"),
+
+
+    # Like & Dislike views
+    path('beat-like/<int:pk>/', views.BeatLikeView.as_view(), name="beat_like"),
+    path('beat-un-like/<int:pk>/', views.BeatUnLikeView.as_view(), name="beat_un_like"),
+    path('beat-dislike/<int:pk>/', views.BeatDisLikeView.as_view(), name="beat_dislike"),
+    path('beat-un-dislike/<int:pk>/', views.BeatUnDisLikeView.as_view(), name="beat_un_dislike")
 ]
 
 router = DefaultRouter()
