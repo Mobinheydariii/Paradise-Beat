@@ -17,12 +17,12 @@ class CheckingManager(Manager):
 
 class DraftManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status=models.Beat.MainStatus.DRAFT)
+        return super().get_queryset().filter(main_status=models.Beat.MainStatus.DRAFT)
     
-class PublishManager(Manager):
+class PublicManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status=models.Beat.MainStatus.PUBLISHED)
+        return super().get_queryset().filter(main_status=models.Beat.MainStatus.PUBLIC)
 
 class PrivateManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status=models.Beat.MainStatus.PRIVATE)
+        return super().get_queryset().filter(main_status=models.Beat.MainStatus.PRIVATE)

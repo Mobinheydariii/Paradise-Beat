@@ -120,18 +120,25 @@ class Beat(models.Model):
     # Represents the publish date of the Beat
     publish = models.DateField(verbose_name="زمان انتشار", blank=True, null=True)
 
+    is_published = models.BooleanField(verbose_name="پابلیک شده", default=True)
+
     # Represents the created date of the Beat
     created = models.DateTimeField(auto_now_add=True)
 
     # Represents the updated date of the Beat
     updated = models.DateTimeField(auto_now=True)
 
+    permium_licence_status = models.BooleanField(verbose_name="وضعیت اشتراک پرمیوم", default=True)
+
+    basic_licence_status = models.BooleanField(verbose_name="وضعیت اشتراک بیسیک", default=True)
+
+    has_active_licence = models.BooleanField(default=True)
     # Managers for the Beat model
     objects = models.Manager()
     accepted = managers.AcceptedManager()
     rejected = managers.RejectedManager()
     checking = managers.CheckingManager()
-    published = managers.PublishManager()
+    public = managers.PublicManager()
     drafts = managers.DraftManager()
     private = managers.PrivateManager()
 
@@ -156,7 +163,13 @@ class PermiumBeatLicence(models.Model):
                              on_delete=models.CASCADE, 
                              verbose_name="بیت", related_name="beat_permium_lisence")
     
-    price = models.BigIntegerField(verbose_name="قیمت")
+    price = models.BigIntegerField(verbose_name="قیمت", default=500000)
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL, null=True,
+        verbose_name="خریدار", related_name="user_permium_licence_owner"
+    )
 
     status = models.CharField(
         max_length=2,
@@ -175,7 +188,13 @@ class BasicBeatLicence(models.Model):
                              on_delete=models.CASCADE, 
                              verbose_name="بیت", related_name="beat_basic_lisence")
     
-    price = models.BigIntegerField(verbose_name="قیمت")
+    price = models.BigIntegerField(verbose_name="قیمت", default=300000)
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL, null=True,
+        verbose_name="خریدار", related_name="user_basic_licence_owner"
+    )
 
     status = models.CharField(
         max_length=2,

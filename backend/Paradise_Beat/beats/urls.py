@@ -27,7 +27,7 @@ urlpatterns = [
     # Private, Draft, Public Beat list
     path("private-beat-list/", views.PrivateBeatsView.as_view(), name="private_beats"),
     path("draft-beat-list/", views.DraftBeatsView.as_view(), name="draft_beats"),
-    path("public-beat-list/", views.PublishedBeatsView.as_view(), name="public_beats"),
+    path("public-beat-list/", views.PublicBeatsView.as_view(), name="public_beats"),
 
     # Accepted, Rejected, Checking
     path("accepted-beat-list/", views.AcceptedBeatsView.as_view(), name="accepted_beats"),

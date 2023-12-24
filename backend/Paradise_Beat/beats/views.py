@@ -2,7 +2,7 @@ from rest_framework.views import APIView, Response
 from rest_framework.viewsets import ViewSet
 from rest_framework import status
 from django.utils.crypto import get_random_string
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db.models.functions import Random
 from .models import(
     Category, 
@@ -10,7 +10,9 @@ from .models import(
     Beat,
     Tag,
     BeatLike,
-    BeatDisLike
+    BeatDisLike,
+    BasicBeatLicence,
+    PermiumBeatLicence,
 )
 from . import serializers
 from .paginations import BeatPagination
@@ -21,7 +23,10 @@ class BeatViewSet(ViewSet, BeatPagination):
     A viewset for working with beat instances.
     """
     def list(self, request, category_slug=None, status=None):
-        queryset = Beat.published.filter(status='AC')
+        queryset = Beat.public.filter(
+            status = Beat.Status.ACCEPTED,
+            has_active_licence = True
+        )
         if category_slug is not None:
             category = get_object_or_404(Category, slug=category_slug)
             queryset = queryset.filter(category=category)
@@ -29,7 +34,7 @@ class BeatViewSet(ViewSet, BeatPagination):
             queryset = queryset.filter(status=status)
         
         # Add the random function to the queryset
-        queryset = queryset.annotate(random=Random()).order_by('random')
+        queryset = queryset.order_by('-likes')
         result = self.paginate_queryset(queryset, request)
         serializer = serializers.BeatSerializer(result, many=True)
         return self.get_paginated_response(serializer.data)
@@ -220,12 +225,12 @@ class DraftBeatsView(APIView):
             return Response({"Detail":"You are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class PublishedBeatsView(APIView):
+class PublicBeatsView(APIView):
     def get(self, request):
         if request.user.is_authenticated == True:
             user = request.user
             if user.type == 'PRD' or 'MUC':
-                queryset = Beat.published.filter(producer=user).order_by('-created')
+                queryset = Beat.public.filter(producer=user).order_by('-created')
                 serializer = serializers.BeatSerializer(queryset, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
