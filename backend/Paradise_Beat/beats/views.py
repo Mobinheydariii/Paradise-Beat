@@ -1,5 +1,5 @@
 from rest_framework.views import APIView, Response
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework import status
 from django.utils.crypto import get_random_string
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -120,6 +120,10 @@ class ProducerBeatView(ViewSet):
                     )
                     # Save the data into database
                     beat.save()
+                    basic_licence = BasicBeatLicence.objects.create(beat=beat)
+                    permuim_licence = PermiumBeatLicence.objects.create(beat=beat)
+                    permuim_licence.save()
+                    basic_licence.save()
                     # We have to save the data and return the 201 status code that means created to the client.
                     return Response({"Response":"Created."}, status=status.HTTP_201_CREATED)
                 else:
@@ -156,7 +160,6 @@ class ProducerBeatView(ViewSet):
                 return Response({"error":"you are not the main producer."}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"error":"you are not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
-        
 
 class CommentViewSet(BeatViewSet):
     """
@@ -348,3 +351,51 @@ class BeatUnDisLikeView(APIView):
             return Response({"Detail":"You un dis liked the beat."}, status=status.HTTP_200_OK)
         else:
             return Response({"Detail":"You need to authenticate."})
+
+
+class BasicLicenceViewset(ViewSet):
+    def retrieve(self, request, beat_id):
+        beat = get_object_or_404(Beat, id=beat_id)
+        licence = get_object_or_404(BasicBeatLicence, beat=beat)
+        serializer = serializers.BasicLicenceSerializer(instance=licence)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def update(self, request, beat_id):
+        if request.user.is_authenticated == True:
+            beat = get_object_or_404(Beat, id=beat_id)
+            if beat.producer == request.user:
+                licence = get_object_or_404(BasicBeatLicence, beat=beat)
+                serializer = serializers.BasicLicenceSerializer(instance=licence ,data=request.data)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_304_NOT_MODIFIED)
+            else:
+                return Response("This isn't your song.", status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response("Please login first", status=status.HTTP_401_UNAUTHORIZED)
+
+
+class PermuimLicenceViewset(ViewSet):
+    def retrieve(self, request, beat_id):
+        beat = get_object_or_404(Beat, id=beat_id)
+        licence = get_object_or_404(PermiumBeatLicence, beat=beat)
+        serializer = serializers.PermiumLicenceSerializer(instance=licence)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def update(self, request, beat_id):
+        if request.user.is_authenticated == True:
+            beat = get_object_or_404(Beat, id=beat_id)
+            if beat.producer == request.user:
+                licence = get_object_or_404(PermiumBeatLicence, beat=beat)
+                serializer = serializers.PermiumLicenceSerializer(instance=licence ,data=request.data)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_304_NOT_MODIFIED)
+            else:
+                return Response("This isn't your song.", status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response("Please login first", status=status.HTTP_401_UNAUTHORIZED)
