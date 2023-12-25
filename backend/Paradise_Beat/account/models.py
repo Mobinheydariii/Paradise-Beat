@@ -234,4 +234,19 @@ class Otp(models.Model):
 
 
     def __str__(self):
-        return f"{self.phone}....{self.username}"
+        return f"{self.phone}....{self.username}" 
+
+
+class UserBankAccount(models.Model):
+    user = models.user = models.ForeignKey(
+        User,
+        on_delete = models.CASCADE,
+        verbose_name = "کاربر", related_name = "user_bank_account"
+    )
+
+    bank_name = models.CharField(max_length=100, verbose_name="نام بانک")
+
+
+    def __str__(self):
+        return f'{self.user.username}-{self.bank_name}'
+    
