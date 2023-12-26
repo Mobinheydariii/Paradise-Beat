@@ -150,57 +150,21 @@ class Beat(models.Model):
     def __str__(self):
         return self.title
 
+class LicenceType(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.name
+        
 
+class BeatLicence(models.Model):
+    beat = models.ForeignKey(Beat, on_delete=models.CASCADE)
+    licence_type = models.ForeignKey(LicenceType, on_delete=models.CASCADE)
+    price = models.BigIntegerField()
 
-class PermiumBeatLicence(models.Model):
-    class PermiumLicenceStatus(models.TextChoices):
-        ACTIVE = 'AC', 'Active'
-        EXPIRED = 'EX', 'Expired'
-    
-
-    beat = models.ForeignKey(Beat, 
-                             on_delete=models.CASCADE, 
-                             verbose_name="بیت", related_name="beat_permium_lisence")
-    
-    price = models.BigIntegerField(verbose_name="قیمت", default=500000)
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL, null=True,
-        verbose_name="خریدار", related_name="user_permium_licence_owner"
-    )
-
-    status = models.CharField(
-        max_length=2,
-        choices = PermiumLicenceStatus.choices,
-        default = PermiumLicenceStatus.ACTIVE
-    )
-
-
-class BasicBeatLicence(models.Model):
-    class BasicLicenceStatus(models.TextChoices):
-        ACTIVE = 'AC', 'Active'
-        EXPIRED = 'EX', 'Expired'
-    
-
-    beat = models.ForeignKey(Beat, 
-                             on_delete=models.CASCADE, 
-                             verbose_name="بیت", related_name="beat_basic_lisence")
-    
-    price = models.BigIntegerField(verbose_name="قیمت", default=300000)
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL, null=True,
-        verbose_name="خریدار", related_name="user_basic_licence_owner"
-    )
-
-    status = models.CharField(
-        max_length=2,
-        choices = BasicLicenceStatus.choices,
-        default = BasicLicenceStatus.ACTIVE
-    )
+    def __str__(self):
+        return f'{self.beat.title}-{self.price}'
 
 
 class Comment(models.Model):

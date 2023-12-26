@@ -5,8 +5,6 @@ from . import models
 
 
 
-
-
 class OfficialManager(Manager):
     def get_queryset(self, *args, **kwargs):
         # Return queryset of only oficial Users
@@ -14,14 +12,13 @@ class OfficialManager(Manager):
     
 class UserManager(BaseUserManager):
     # Method to create user with provided credentials
-    def create_user(self, username, email , phone, type, slug, password=None): 
+    def create_user(self, username, email , phone, type, password=None): 
         email = email.lower()
         user = self.model( 
             username = username,
             email = email,
             phone = phone,
             type = type,
-            slug = slug
         ) 
         user.set_password(password) 
         user.save(using = self._db) 
@@ -29,23 +26,11 @@ class UserManager(BaseUserManager):
 
     # Method to create superuser with provided credentials
     def create_superuser(self, username, email, phone, password=None):
-        # Validate username
-        if not username or len(username) <= 0 :
-            raise ValueError("Users must have a valid username")
-        # Validate phone number
-        if not phone or len(phone) <= 0 :
-            raise ValueError('Phone number is required ')
-        # Validate email
-        if not email or len(email) <= 0 :  
-            raise ValueError("Email field is required !") 
-        # Validate password
-        if not password or len(password) < 8 :
-            raise ValueError("Password should be at least 8 characters long ")
-        
         user = self.create_user(
             email=self.normalize_email(email),
             username=username,
             phone=phone,
+            type="SIM",
             password=password
         )
         user.is_admin = True

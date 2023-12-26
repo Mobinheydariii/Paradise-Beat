@@ -40,13 +40,6 @@ urlpatterns = [
     path('beat-un-like/<int:pk>/', views.BeatUnLikeView.as_view(), name="beat_un_like"),
     path('beat-dislike/<int:pk>/', views.BeatDisLikeView.as_view(), name="beat_dislike"),
     path('beat-un-dislike/<int:pk>/', views.BeatUnDisLikeView.as_view(), name="beat_un_dislike"),
-
-    # Licence .....
-    path('basic-beat-licence/<int:beat_id>', views.BasicLicenceViewset.as_view({"get":"retrieve"}), name="basic_beat_licence"),
-    path('basic-beat-licence/update/<int:beat_id>', views.BasicLicenceViewset.as_view({"post":"update"}), name="basic_beat_licence_update"),
-
-    path('permium-beat-licence/<int:beat_id>', views.PermuimLicenceViewset.as_view({"get":"retrieve"}), name="permuim_beat_licence"),
-    path('permium-beat-licence/update/<int:beat_id>', views.PermuimLicenceViewset.as_view({"post":"update"}), name="permuim_beat_licence_update"),
 ]
 
 router = DefaultRouter()

@@ -4,8 +4,7 @@ from .models import(
     Category,
     Comment,
     Tag,
-    BasicBeatLicence,
-    PermiumBeatLicence
+    BeatLicence,
 )
 
 class BeatSerializer(serializers.ModelSerializer):
@@ -36,14 +35,8 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
-class BasicLicenceSerializer(serializers.ModelSerializer):
+class licenceSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = BasicBeatLicence
-        fields = "__all__"
-
-class PermiumLicenceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PermiumBeatLicence
+        model = BeatLicence
         fields = "__all__"

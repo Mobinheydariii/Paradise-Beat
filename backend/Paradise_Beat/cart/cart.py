@@ -27,16 +27,17 @@ class Cart:
         """
         Add a beat with licence to the cart or update the licence type.
         """
-        beat_id = str(beat.id)
+        beat_id = str(beat['id'])
         if beat_id not in self.cart:
             self.cart[beat_id] = {
                 'beat' : beat,
                 'licence' : licence,
-                'price' : licence.price
+                'price' : price
             }
-        else:
-            self.cart[beat_id][licence] = licence
-            self.cart[beat_id][price] = licence.price
+        # else:
+            # self.cart[beat_id][licence] = licence
+            # self.cart[beat_id][price] = price
+            # print(self.cart[beat_id][licence])
         self.save()
 
 
