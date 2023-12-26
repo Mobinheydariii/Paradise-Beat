@@ -159,3 +159,6 @@ DATABASES = {
 
 # AUTH user model
 AUTH_USER_MODEL = 'account.User'
+
+# Cart Session Id
+CART_SESSION_ID = "cart"
