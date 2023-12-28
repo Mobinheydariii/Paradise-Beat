@@ -1,15 +1,13 @@
 from rest_framework import serializers
-from beats.serializers import BeatSerializer
-from .cart import Cart
+from .models import Cart, CartItem
 
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = "__all__"
 
-
-
-class CartSerializer(serializers.Serializer):
-    beat = BeatSerializer(many=True)
-    
-    licence = serializers.CharField()
-    price = serializers.IntegerField()
-    total_price = serializers.IntegerField()
-    lenth = serializers.IntegerField()
-    
+class CartSerializer(serializers.ModelSerializer):
+    cart_item = CartItemSerializer(many=True)
+    class Meta:
+        model = Cart
+        fields = ('user', 'beat', 'cart_item', 'total_price')
